@@ -59,5 +59,5 @@ All my work is voluntary and nonprofit, however you can make children happy by m
 - Thanks to Team molecule ([Davee](https://twitter.com/DaveeFTW), Proxima, [xyz](https://twitter.com/pomfpomfpomf3), [yifanlu](https://twitter.com/yifanlu)) for HENkaku, taiHEN and everything else they have done for the scene.
 - Thanks to [Motoharu](https://github.com/motoharu-gosuto) for all his work on NpDrm.
 - Thanks to [CodeRobe](https://twitter.com/coderobe), [Devnoname120](https://twitter.com/devnoname120) and [Rinnegatamante](https://twitter.com/Rinnegatamante) for supporting me during beta testing.
-- Thanks to [TheFlow](https://twitter.com/theflow0) for NoNpDrm[https://github.com/TheOfficialFloW/NoNpDrm]
+- Thanks to [TheFlow](https://twitter.com/theflow0) for [NoNpDrm](https://github.com/TheOfficialFloW/NoNpDrm)
 - Thanks to everyone that helped at vitahacks [thread1](https://www.reddit.com/r/vitahacks/comments/71xuq9/nopsmdrm_status_and_help/),[thread2](https://www.reddit.com/r/vitahacks/comments/6cqokl/some_research_on_psm_games_do_you_still_have_some/)
