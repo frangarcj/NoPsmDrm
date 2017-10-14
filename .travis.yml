@@ -1,0 +1,28 @@
+sudo: required
+
+language: c
+
+before_install:
+  - cd ..
+  - git clone https://github.com/vitasdk/vdpm
+  - cd vdpm
+  - ./bootstrap-vitasdk.sh
+  - export VITASDK=/usr/local/vitasdk
+  - export PATH=$VITASDK/bin:$PATH
+  - ./vdpm taihen
+  - cd ../NoPsmDrm
+script:
+  - cd src
+  - cmake .
+  - make
+env:
+ global:
+  - TOP=$PWD
+  - PREFIX=$TOP/dist
+deploy:
+  provider: releases
+  api_key: $OAUTH
+  file: "nopsmdrm.skprx"
+  skip_cleanup: true
+  on:
+    tags: true
