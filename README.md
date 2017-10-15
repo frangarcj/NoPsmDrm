@@ -22,6 +22,9 @@ In a nutshell, this plugin allows you to bypass DRM protection on PSM game conte
 ## Software Requirements
 This software will only work on PlayStation Vita, PlayStation Vita TV, PlayStation TV devices running on firmware 3.60, the taiHEN framework and HENkaku need to be running on your device, for more information please connect to https://henkaku.xyz/  
 
+### Installing PSM runtime
+When running a game for the first time, it will ask to install psm runtime. In order to download and install it, you need to change your DNS to [Henkaku Update Server](https://www.reddit.com/r/vitahacks/comments/5g819i/henkaku_update_server_easy_and_safe_way_to_update/)
+
 ## Installation
 Download the latest [nopsmdrm.skprx](https://github.com/frangarcj/NoPsmDrm/releases), copy it to `ux0:tai` and modify the `ux0:tai/config.txt` file to add the path to the module under `*KERNEL` as follows
 
