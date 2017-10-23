@@ -23,7 +23,7 @@
 #include <psp2kern/io/dirent.h>
 #include <psp2kern/io/fcntl.h>
 #include <psp2kern/io/stat.h>
-
+#include <psp2kern/registrymgr.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -200,10 +200,11 @@ static SceUID _ksceKernelLaunchAppPatched(void *args)
         debugPrintf("titleid: %s\n", titleid);
         debugPrintf("flags: 0x%lx\n", flags);
         debugPrintf("path: %s\n", path);
+	
+	ksceRegMgrSetKeyInt("CONFIG/PSM", "revocation_check_req", 0); //set revocation_check_req to 0. 
 
         snprintf(license_path, sizeof(license_path) - 1, "ux0:psm/%s/RO/License", titleid);
         debugPrintf("license_path: %s\n", license_path);
-
         FindLicenses(license_path);
     }
 
