@@ -6,10 +6,10 @@ before_install:
   - cd ..
   - git clone https://github.com/vitasdk/vdpm
   - cd vdpm
-  - ./bootstrap-vitasdk.sh
+  - bash bootstrap-vitasdk.sh
   - export VITASDK=/usr/local/vitasdk
   - export PATH=$VITASDK/bin:$PATH
-  - ./vdpm taihen
+  - bash vdpm taihen
   - cd ../NoPsmDrm
 script:
   - cd src
