@@ -372,7 +372,10 @@ void _start() __attribute__((weak, alias("module_start")));
 int module_start(SceSize args, void *argp)
 {
 
-    hooks[n_hooks++] = taiHookFunctionExportForKernel(KERNEL_PID, &ksceKernelLaunchAppRef, "SceProcessmgr", 0x7A69DE86, 0x71CF71FD, ksceKernelLaunchAppPatched);
+    hooks[n_hooks] = taiHookFunctionExportForKernel(KERNEL_PID, &ksceKernelLaunchAppRef, "SceProcessmgr", 0x7A69DE86, 0x71CF71FD, ksceKernelLaunchAppPatched);
+    if (hooks[n_hooks] < 0)
+    	hooks[n_hooks] = taiHookFunctionExportForKernel(KERNEL_PID, &ksceKernelLaunchAppRef,           "SceProcessmgr", 0xEB1F8EF7, 0x68068618, ksceKernelLaunchAppPatched);
+    n_hooks++;
     hooks[n_hooks++] = taiHookFunctionExportForKernel(KERNEL_PID, &ScePsmDrmForDriver_B09003A7_ref, "SceNpDrm", 0x9F4924F2, 0xB09003A7, ScePsmDrmForDriver_B09003A7_patched);
     hooks[n_hooks++] = taiHookFunctionExportForKernel(KERNEL_PID, &ScePsmDrmForDriver_984F9017_ref, "SceNpDrm", 0x9F4924F2, 0x984F9017, ScePsmDrmForDriver_984F9017_patched);
     hooks[n_hooks++] = taiHookFunctionExportForKernel(KERNEL_PID, &ScePsmDrmForDriver_8C8CFD01_ref, "SceNpDrm", 0x9F4924F2, 0x8C8CFD01, ScePsmDrmForDriver_8C8CFD01_patched);
