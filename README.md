@@ -48,7 +48,7 @@ The fake licenses for the applications will then be stored at
 
 ## Installing shared games
 - PSM games must be stored at the following location: `ux0:psm/TITLE_ID`
-- You must update / rebuild database 
+- You must update / rebuild database, for example by removing `ux0:id.dat` and rebooting. A dialogue my pop up asking if  a data transfer should be performed. Press "No", otherwise the memory card will be formatted.
 
 ## Source code
 The source code is located within the `src` directory and is licensed under `GPLv3`.
