@@ -191,8 +191,10 @@ static SceUID _ksceKernelLaunchAppPatched(void *args)
     uint32_t flags = (uint32_t)((uintptr_t *)args)[1];
     char *path = (char *)((uintptr_t *)args)[2];
     void *unk = (void *)((uintptr_t *)args)[3];
-
-    if (flags == 0x1000000 && strstr(path, "PCSI00011"))
+	
+	//runtime = PSM UNITY RUNTIME
+	//PCSI00011 = PSM RUNTIME
+    if ((flags == 0x1000000 && strstr(path, "PCSI00011")) || (flags == 0x1000000 && strstr(path, "runtime")))
     {
         char license_path[256];
 
