@@ -46,6 +46,8 @@ The fake licenses for the applications will then be stored at
   `ux0:psm/NPOA00013/RO/License/FAKE.rif`.
 - If you wish to use the application on a different device, transfer the content of `ux0:psm/TITLE_ID` to your PC and copy the fake license `ux0:data/EM0041-NPOA00013_00-0000000000000000.rif` file as `ux0:psm/TITLE_ID/RO/License/FAKE.rif` **You need to update / rebuild database**
 
+If the game is "Powered by Unity" then you must ALSO create a folder in `ux0:/license/app/PSM_TITLE_ID` and place `6488b73b912a753a492e2714e9b38bc7.rif` into that folder.
+
 ## Installing shared games
 - PSM games must be stored at the following location: `ux0:psm/TITLE_ID`
 - You must update / rebuild database 
