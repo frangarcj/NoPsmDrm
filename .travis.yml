@@ -4,6 +4,7 @@ dist: precise
 language: c
 
 before_install:
+  - sudo apt-get update
   - cd ..
   - git clone https://github.com/vitasdk/vdpm
   - cd vdpm
