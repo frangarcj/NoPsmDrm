@@ -65,7 +65,7 @@ This will help you fix the following error: "Go to the home screen and select [S
     - Restart your Vita.
   
 2. Set DNS to `212.47.229.76` in your Wifi settings.
-3. Use [SimpleAccountSwitcher](https://bitbucket.org/SilicaAndPina/simpleaccountswitcher/downloads) to connect to or create a new PSN account.
+3. Use [SimpleAccountSwitcher](https://bitbucket.org/SilicaAndPina/simpleaccountswitcher/downloads) to connect to or create a new PSN account. **This will make you lose all your local trophies.**
 
 **Note**: After creating or connecting to a new account, you might have messages telling you that you cannot earn trophies. In order to fix this you can use [PSV Trophies Fixer](https://github.com/Yoti/psv_trophfix/releases).
 
