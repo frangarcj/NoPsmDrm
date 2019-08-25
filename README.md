@@ -52,6 +52,24 @@ If the game is "Powered by Unity" then you must ALSO create a folder in `ux0:/li
 - PSM games must be stored at the following location: `ux0:psm/TITLE_ID`
 - You must update / rebuild database 
 
+## Known issues
+
+### Asked to activate when launching any PSM game
+
+This will help you fix the following error: "Go to the home screen and select [Settings] > [PSN] > [System Activation] and then activate this system."
+
+1. Download and install [PSM Manager](https://github.com/Yoti/psv_npdrmfix/releases).
+
+    - Launch it and click on "Fake AID".
+    - Click on "Fix Unity".
+    - Restart your Vita.
+  
+2. Download and install [RegistryEditorMOD](https://github.com/devnoname120/RegistryEditorMOD/releases) and use it to set `/CONFIG/PSM/psm_revokation_check` to `0`.
+3. Set DNS to `212.47.229.76` in your Wifi settings.
+4. Use [SimpleAccountSwitcher](https://bitbucket.org/SilicaAndPina/simpleaccountswitcher/downloads) to connect to or create a new PSN account.
+
+**Note**: After creating or connecting to a new account, you might have messages telling you that you cannot earn trophies. In order to fix this you can use [PSV Trophies Fixer](https://github.com/Yoti/psv_trophfix/releases).
+
 ## Source code
 The source code is located within the `src` directory and is licensed under `GPLv3`.
 
