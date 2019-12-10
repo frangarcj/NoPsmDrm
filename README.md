@@ -50,7 +50,7 @@ If the game is "Powered by Unity" then you must ALSO create a folder in `ux0:/li
 
 ## Installing shared games
 - PSM games must be stored at the following location: `ux0:psm/TITLE_ID`
-- You must update / rebuild database 
+- You must update / rebuild database, for example by removing `ux0:id.dat` and rebooting. A dialogue my pop up asking if  a data transfer should be performed. Press "No", otherwise the memory card will be formatted.
 
 ## Known issues
 
