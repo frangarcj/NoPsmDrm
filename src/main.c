@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <psp2kern/kernel/sysclib.h>
 #include <psp2kern/kernel/modulemgr.h>
 #include <psp2kern/kernel/sysmem.h>
 #include <psp2kern/kernel/threadmgr.h>
@@ -24,7 +25,6 @@
 #include <psp2kern/io/fcntl.h>
 #include <psp2kern/io/stat.h>
 #include <stdio.h>
-#include <string.h>
 
 #include <taihen.h>
 
@@ -32,9 +32,10 @@
 #define UNACTIVATED_AID 0x21191d6d5de7c6dbLL
 
 static tai_hook_ref_t ksceKernelLaunchAppRef;
-static tai_hook_ref_t ScePsmDrmForDriver_B09003A7_ref;
-static tai_hook_ref_t ScePsmDrmForDriver_984F9017_ref;
-static tai_hook_ref_t ScePsmDrmForDriver_8C8CFD01_ref;
+static tai_hook_ref_t kscePsmDrmGetActInfo_ref;
+static tai_hook_ref_t kscePsmDrmGetRifInfo_ref;
+static tai_hook_ref_t kscePsmDrmGetRifKey_ref;
+static tai_hook_ref_t kscePsmDrmGetRifNameForInstall_ref;
 
 static SceUID hooks[4];
 static int n_hooks = 0;
@@ -78,6 +79,7 @@ void debug_printf(char *msg)
         debug_printf(msg);                       \
     \
 }
+
 
 char reg_buffer[2048];
 
@@ -191,9 +193,9 @@ static SceUID _ksceKernelLaunchAppPatched(void *args)
     uint32_t flags = (uint32_t)((uintptr_t *)args)[1];
     char *path = (char *)((uintptr_t *)args)[2];
     void *unk = (void *)((uintptr_t *)args)[3];
-	
-	//runtime = PSM UNITY RUNTIME
-	//PCSI00011 = PSM RUNTIME
+    
+    //runtime = PSM UNITY RUNTIME
+    //PCSI00011 = PSM RUNTIME
     if ((flags == 0x1000000 && strstr(path, "PCSI00011")) || (flags == 0x1000000 && strstr(path, "runtime")))
     {
         char license_path[256];
@@ -201,8 +203,8 @@ static SceUID _ksceKernelLaunchAppPatched(void *args)
         debugPrintf("titleid: %s\n", titleid);
         debugPrintf("flags: 0x%lx\n", flags);
         debugPrintf("path: %s\n", path);
-	
-	ksceRegMgrSetKeyInt("/CONFIG/PSM/", "revocation_check_req", 0); //set revocation_check_req to 0. 
+    
+        ksceRegMgrSetKeyInt("/CONFIG/PSM/", "revocation_check_req", 0); //set revocation_check_req to 0. 
 
         snprintf(license_path, sizeof(license_path) - 1, "ux0:psm/%s/RO/License", titleid);
         debugPrintf("license_path: %s\n", license_path);
@@ -223,12 +225,12 @@ static SceUID ksceKernelLaunchAppPatched(char *titleid, uint32_t flags, char *pa
     return ksceKernelRunWithStack(0x4000, _ksceKernelLaunchAppPatched, args);
 }
 
-static int ScePsmDrmForDriver_B09003A7_patched(uint32_t *unk1A, uint32_t *unk1B, uint64_t *aid, uint64_t *start_time, uint64_t *expiration_time)
+static int kscePsmDrmGetActInfo_patched(uint32_t *unk1A, uint32_t *unk1B, uint64_t *aid, uint64_t *start_time, uint64_t *expiration_time)
 {
-    int res = TAI_CONTINUE(int, ScePsmDrmForDriver_B09003A7_ref, unk1A, unk1B, aid,
+    int res = TAI_CONTINUE(int, kscePsmDrmGetActInfo_ref, unk1A, unk1B, aid,
                            start_time, expiration_time);
 
-    debugPrintf("ScePsmDrmForDriver_B09003A7_ref: %x\n", res);
+    debugPrintf("kscePsmDrmGetActInfo_ref: %x\n", res);
 
     // Bypass expiration time for PSM account
     if (start_time)
@@ -236,7 +238,7 @@ static int ScePsmDrmForDriver_B09003A7_patched(uint32_t *unk1A, uint32_t *unk1B,
     if (expiration_time)
         *expiration_time = 0x7FFFFFFFFFFFFFFFLL;
 
-    // Get fake rif info and return success
+    // Get fake act info and return success
     if (aid)
     {
         *aid = 0LL;
@@ -247,7 +249,7 @@ static int ScePsmDrmForDriver_B09003A7_patched(uint32_t *unk1A, uint32_t *unk1B,
     return 0;
 }
 
-static int _ScePsmDrmForDriver_8C8CFD01_patched(void *args)
+static int _kscePsmDrmGetRifKey_patched(void *args)
 {
 
     ScePsmDrmLicense *license_buf = (ScePsmDrmLicense *)((uintptr_t *)args)[0];
@@ -260,10 +262,10 @@ static int _ScePsmDrmForDriver_8C8CFD01_patched(void *args)
     char path[256];
     //char rif_name[48];
 
-    res = TAI_CONTINUE(int, ScePsmDrmForDriver_8C8CFD01_ref, license_buf, klicensee, flags,
+    res = TAI_CONTINUE(int, kscePsmDrmGetRifKey_ref, license_buf, klicensee, flags,
                        start_time, expiration_time);
 
-    debugPrintf("ScePsmDrmForDriver_8C8CFD01_ref: %x\n", res);
+    debugPrintf("kscePsmDrmGetRifKey_ref: %x\n", res);
 
     if (res == 0)
     {
@@ -329,7 +331,7 @@ static int _ScePsmDrmForDriver_8C8CFD01_patched(void *args)
     }
 }
 
-static int ScePsmDrmForDriver_8C8CFD01_patched(ScePsmDrmLicense *license_buf, uint8_t *klicensee, uint32_t *flags, uint64_t *start_time, uint64_t *expiration_time)
+static int kscePsmDrmGetRifKey_patched(ScePsmDrmLicense *license_buf, uint8_t *klicensee, uint32_t *flags, uint64_t *start_time, uint64_t *expiration_time)
 {
     uintptr_t args[5];
     args[0] = (uintptr_t)license_buf;
@@ -338,15 +340,16 @@ static int ScePsmDrmForDriver_8C8CFD01_patched(ScePsmDrmLicense *license_buf, ui
     args[3] = (uintptr_t)start_time;
     args[4] = (uintptr_t)expiration_time;
 
-    return ksceKernelRunWithStack(0x4000, _ScePsmDrmForDriver_8C8CFD01_patched, args);
+    return ksceKernelRunWithStack(0x4000, _kscePsmDrmGetRifKey_patched, args);
 }
 
-static int ScePsmDrmForDriver_984F9017_patched(ScePsmDrmLicense *license_buf, char *content_id, uint64_t *aid, uint64_t *start_time, uint64_t *expiration_time)
+
+static int kscePsmDrmGetRifInfo_patched(ScePsmDrmLicense *license_buf, char *content_id, uint64_t *aid, uint64_t *start_time, uint64_t *expiration_time)
 {
-    int res = TAI_CONTINUE(int, ScePsmDrmForDriver_984F9017_ref, license_buf, content_id, aid,
+    int res = TAI_CONTINUE(int, kscePsmDrmGetRifInfo_ref, license_buf, content_id, aid,
                            start_time, expiration_time);
 
-    debugPrintf("ScePsmDrmForDriver_984F9017_patched: %x\n", res);
+    debugPrintf("kscePsmDrmGetRifInfo_patched: %x\n", res);
     // Bypass expiration time for PSM games
     if (start_time)
         *start_time = 0LL;
@@ -370,17 +373,36 @@ static int ScePsmDrmForDriver_984F9017_patched(ScePsmDrmLicense *license_buf, ch
     return res;
 }
 
+
+static int scePsmDrmGetRifNameForInstall_patched(char* out_name, ScePsmDrmLicense* in_license) {
+    char rif_name[48];
+
+    int res = TAI_CONTINUE(int, kscePsmDrmGetRifNameForInstall_ref, out_name, in_license);
+    debugPrintf("kscePsmDrmGetRifNameForInstall_patched res = %x\n", res);
+    
+    if(res < 0 && out_name) {
+        strncpy(rif_name, "FAKE.rif", sizeof(rif_name));
+        ksceKernelMemcpyToUser(out_name, rif_name, sizeof(rif_name));
+        return 0;
+    }
+    
+    return res;
+}
+
 void _start() __attribute__((weak, alias("module_start")));
 int module_start(SceSize args, void *argp)
 {
 
     hooks[n_hooks] = taiHookFunctionExportForKernel(KERNEL_PID, &ksceKernelLaunchAppRef, "SceProcessmgr", 0x7A69DE86, 0x71CF71FD, ksceKernelLaunchAppPatched);
     if (hooks[n_hooks] < 0)
-    	hooks[n_hooks] = taiHookFunctionExportForKernel(KERNEL_PID, &ksceKernelLaunchAppRef,           "SceProcessmgr", 0xEB1F8EF7, 0x68068618, ksceKernelLaunchAppPatched);
+        hooks[n_hooks] = taiHookFunctionExportForKernel(KERNEL_PID, &ksceKernelLaunchAppRef, "SceProcessmgr", 0xEB1F8EF7, 0x68068618, ksceKernelLaunchAppPatched);
     n_hooks++;
-    hooks[n_hooks++] = taiHookFunctionExportForKernel(KERNEL_PID, &ScePsmDrmForDriver_B09003A7_ref, "SceNpDrm", 0x9F4924F2, 0xB09003A7, ScePsmDrmForDriver_B09003A7_patched);
-    hooks[n_hooks++] = taiHookFunctionExportForKernel(KERNEL_PID, &ScePsmDrmForDriver_984F9017_ref, "SceNpDrm", 0x9F4924F2, 0x984F9017, ScePsmDrmForDriver_984F9017_patched);
-    hooks[n_hooks++] = taiHookFunctionExportForKernel(KERNEL_PID, &ScePsmDrmForDriver_8C8CFD01_ref, "SceNpDrm", 0x9F4924F2, 0x8C8CFD01, ScePsmDrmForDriver_8C8CFD01_patched);
+    
+    hooks[n_hooks++] = taiHookFunctionExportForKernel(KERNEL_PID, &kscePsmDrmGetActInfo_ref, "SceNpDrm", 0x9F4924F2, 0xB09003A7, kscePsmDrmGetActInfo_patched);
+    hooks[n_hooks++] = taiHookFunctionExportForKernel(KERNEL_PID, &kscePsmDrmGetRifInfo_ref, "SceNpDrm", 0x9F4924F2, 0x984F9017, kscePsmDrmGetRifInfo_patched);
+    hooks[n_hooks++] = taiHookFunctionExportForKernel(KERNEL_PID, &kscePsmDrmGetRifKey_ref, "SceNpDrm", 0x9F4924F2, 0x8C8CFD01, kscePsmDrmGetRifKey_patched);
+    
+    hooks[n_hooks++] = taiHookFunctionExportForKernel(KERNEL_PID, &kscePsmDrmGetRifNameForInstall_ref, "SceNpDrm", 0x3F2B0888, 0x0D6470DA, scePsmDrmGetRifNameForInstall_patched);
 
     return SCE_KERNEL_START_SUCCESS;
 }
@@ -389,11 +411,13 @@ int module_stop(SceSize args, void *argp)
 {
 
     if (hooks[--n_hooks] >= 0)
-        taiHookReleaseForKernel(hooks[n_hooks], ScePsmDrmForDriver_8C8CFD01_ref);
+        taiHookReleaseForKernel(hooks[n_hooks], kscePsmDrmGetRifNameForInstall_ref);
     if (hooks[--n_hooks] >= 0)
-        taiHookReleaseForKernel(hooks[n_hooks], ScePsmDrmForDriver_984F9017_ref);
+        taiHookReleaseForKernel(hooks[n_hooks], kscePsmDrmGetRifKey_ref);
     if (hooks[--n_hooks] >= 0)
-        taiHookReleaseForKernel(hooks[n_hooks], ScePsmDrmForDriver_B09003A7_ref);
+        taiHookReleaseForKernel(hooks[n_hooks], kscePsmDrmGetRifInfo_ref);
+    if (hooks[--n_hooks] >= 0)
+        taiHookReleaseForKernel(hooks[n_hooks], kscePsmDrmGetActInfo_ref);
     if (hooks[--n_hooks] >= 0)
         taiHookReleaseForKernel(hooks[n_hooks], ksceKernelLaunchAppRef);
 
