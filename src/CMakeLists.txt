@@ -22,6 +22,7 @@ target_link_libraries(nopsmdrm
   SceIofilemgrForDriver_stub
   SceNpDrmForDriver_stub
   SceSysclibForDriver_stub
+  SceSysmemForDriver_stub
   SceThreadmgrForDriver_stub
   SceRegMgrForDriver_stub
   taihenForKernel_stub
