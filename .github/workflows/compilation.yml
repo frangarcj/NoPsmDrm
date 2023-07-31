@@ -22,7 +22,7 @@ jobs:
       if: ${{ success() }}
       uses: actions/upload-artifact@v2
       with:
-        name: nopsmdrm.skprx.vpk
+        name: nopsmdrm.skprx
         path: build/nopsmdrm.skprx
     - uses: svenstaro/upload-release-action@v2
       if: contains(github.ref,'refs/tags')
