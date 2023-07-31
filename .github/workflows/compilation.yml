@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  repository_dispatch:
+    types: [run_build]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: vitasdk/vitasdk:latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Compile project
+      run: |
+        mkdir build
+        cd build
+        cmake ../src/
+        make -j$(nproc)
+    - name: Upload artifacts
+      if: ${{ success() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: nopsmdrm.skprx.vpk
+        path: build/nopsmdrm.skprx
+    - uses: svenstaro/upload-release-action@v2
+      if: contains(github.ref,'refs/tags')
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: build/nopsmdrm.skprx
+        overwrite: true
+        tag: ${{ github.ref }}
